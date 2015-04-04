@@ -78,17 +78,16 @@
 
             this.apiCache.get(cacheKey, function (err, value) {
                 if (err) { return callback(err); }
-                if (value) { return callback(null, value); }
+                if (value) { return callback(null, self.parse(value)); }
 
                 self.requestHandler(self.url, function(err, data, xhr, ttl) {
                     if (err) { return callback(err, null, xhr); }
 
-                    var parsed = self.parse(data);
                     ttl = ttl | self.apiDataTTL;
 
-                    self.apiCache.set(cacheKey, parsed, ttl, function (err) {
+                    self.apiCache.set(cacheKey, data, ttl, function (err) {
                         if (err) { return callback(err, null, xhr); }
-                        return callback(null, parsed, xhr);
+                        return callback(null, self.parse(data), xhr);
                     });
                 });
             });
